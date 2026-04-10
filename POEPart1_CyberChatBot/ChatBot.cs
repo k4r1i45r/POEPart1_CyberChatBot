@@ -3,67 +3,108 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 namespace POEPart1_CyberChatBot
 {
     internal class ChatBot
     {
+        Random rand = new Random();
+
         public string GetResponse(string userInput, string userName)
         {
-            string lowerInput = userInput.ToLower();
+            string input = userInput.ToLower().Trim();
 
-            // Questions about the bot itself (check these FIRST)
-            if (lowerInput.Contains("how is your response") ||
-                lowerInput.Contains("how are your response") ||
-                lowerInput.Contains("how do you respond"))
+            if (input.Contains("thank") || input.Contains("bye") || input.Contains("goodbye") || input.Contains("quit"))
             {
-                return $"I respond based on keywords, {userName}. Ask me about passwords, phishing, malware, or safe browsing.";
+                return $"EXIT|No problem, {userName}. Stay safe out there 👋";
             }
 
-            if (lowerInput.Contains("what is your purpose") ||
-                lowerInput.Contains("what do you do"))
+            if (input.Contains("hello") || input.Contains("hi"))
             {
-                return $"My purpose is to help you stay safe online, {userName}. I can answer basic cybersecurity questions.";
+                string[] responses =
+                {
+                    $"Hey {userName}, how can I help you today?",
+                    $"Hi {userName}! Got any cybersecurity questions?",
+                    $"Hello {userName} 👋 what would you like to know?"
+                };
+                return Pick(responses);
             }
 
-            // Greeting responses (check AFTER bot questions)
-            if (lowerInput.Contains("how are you"))
+            if (input.Contains("how are you"))
             {
-                return $"I am functioning well, {userName}. Ready to help you with cybersecurity.";
+                string[] responses =
+                {
+                    $"Doing good, {userName}. Ready to keep you safe online 😄",
+                    $"All good here. What do you need help with?",
+                    $"I'm good! Let's talk cybersecurity."
+                };
+                return Pick(responses);
             }
 
-            // Cybersecurity questions
-            if (lowerInput.Contains("password"))
+            if (input.Contains("purpose") || input.Contains("what do you do"))
             {
-                return $"A strong password should be at least 12 characters, {userName}. Use uppercase, lowercase, numbers, and symbols. Never reuse passwords.";
+                return $"I help you understand cybersecurity basics, {userName}. Things like passwords, scams, and staying safe online.";
             }
 
-            if (lowerInput.Contains("phishing"))
+            if (input.Contains("password"))
             {
-                return $"Phishing is when scammers pretend to be legitimate companies to steal your info, {userName}. Never click suspicious links or share personal details via email.";
+                string[] responses =
+                {
+                    $"Make your passwords long and unpredictable, {userName}. Think phrases, not just words.",
+                    $"A strong password = 12+ characters, mix of symbols, numbers, and letters.",
+                    $"Tip: Don't reuse passwords across sites. One breach can expose everything."
+                };
+                return Pick(responses);
             }
 
-            if (lowerInput.Contains("malware") || lowerInput.Contains("virus"))
+            if (input.Contains("phishing"))
             {
-                return $"Malware is malicious software. Protect yourself by keeping your system updated, {userName}, and avoid downloading from untrusted sources.";
+                string[] responses =
+                {
+                    $"Phishing is basically fake messages trying to trick you into giving info.",
+                    $"If a link looks suspicious, don’t click it. That’s how phishing usually works.",
+                    $"Always double-check emails asking for passwords or banking info."
+                };
+                return Pick(responses);
             }
 
-            if (lowerInput.Contains("two factor") || lowerInput.Contains("2fa") || lowerInput.Contains("mfa"))
+            if (input.Contains("malware") || input.Contains("virus"))
             {
-                return $"Two-factor authentication adds an extra layer of security, {userName}. Always enable it when available to protect your accounts.";
+                string[] responses =
+                {
+                    $"Malware is harmful software. Avoid sketchy downloads.",
+                    $"Viruses often come from unsafe files or websites.",
+                    $"Keep your antivirus updated, it actually matters."
+                };
+                return Pick(responses);
             }
 
-            if (lowerInput.Contains("vpn"))
+            if (input.Contains("2fa") || input.Contains("two factor") || input.Contains("mfa"))
             {
-                return $"A VPN encrypts your internet traffic, {userName}. It helps protect your privacy, especially on public Wi-Fi.";
+                return $"2FA adds a second lock to your account, {userName}. Even if someone gets your password, they’re still blocked.";
             }
 
-            if (lowerInput.Contains("update") || lowerInput.Contains("patch"))
+            if (input.Contains("vpn"))
             {
-                return $"Regular updates fix security vulnerabilities, {userName}. Always install updates promptly for your operating system and apps.";
+                return $"A VPN hides your internet activity, especially useful on public Wi-Fi.";
             }
 
-            // Default response for unknown questions
-            return $"That's a good question, {userName}. I'm still learning. Can you ask me about passwords, phishing, malware, 2FA, or VPNs?";
+            if (input.Contains("update") || input.Contains("patch"))
+            {
+                return $"Updates fix security holes. Skipping them = leaving your door open.";
+            }
+
+            if (input.Contains("help"))
+            {
+                return $"You can ask me about passwords, phishing, malware, VPNs, or 2FA.";
+            }
+
+            return $"Hmm {userName}, I’m not sure about that. Try asking something about cybersecurity.";
+        }
+
+        private string Pick(string[] options)
+        {
+            return options[rand.Next(options.Length)];
         }
     }
 }
