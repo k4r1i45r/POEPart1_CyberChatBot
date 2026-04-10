@@ -5,169 +5,117 @@ using System;
 using System.Threading;
 using POEPart1_CyberChatBot;
 
+// See https://aka.ms/new-console-template for more information
+// Initial setup
+
+using System.Media;
+using System.Threading;
+using POEPart1_CyberChatBot;
+
 namespace SypherChatbot
 {
     class Program
     {
         static void Main(string[] args)
         {
-            SetupConsole();
-            PlayGreeting();
-            DisplayAsciiArt();
-
-            string userName = GetUserName();
-            User user = new User(userName);
-
-            DisplayWelcome(user);
-            StartChat(user);
-            DisplayGoodbye(user);
-        }
-
-        static void SetupConsole()
-        {
             Console.Title = "Sypher - Cybersecurity Assistant";
             Console.ForegroundColor = ConsoleColor.Cyan;
-        }
 
-        static void PlayGreeting()
-        {
+            // Play voice greeting using AudioPlayer
             AudioPlayer audio = new AudioPlayer();
+            audio.PlayGreeting("greeting.wav");
 
-            try
-            {
-                audio.PlayGreeting("Greeting.wav");
-            }
-            catch
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Audio could not be played.");
-            }
-        }
-
-        static void DisplayAsciiArt()
-        {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-
-            Console.WriteLine("╔══════════════════════════════════════╗");
-            Console.WriteLine("║        SYPHER CYBER BOT              ║");
-            Console.WriteLine("╚══════════════════════════════════════╝");
-
-            Console.WriteLine(@"
-   _____             _               
+            // Display Sypher ASCII art
+            Console.WriteLine(@"   _____             _               
   / ____|           | |              
  | (___  _   _ _ __ | |__   ___ _ __ 
   \___ \| | | | '_ \| '_ \ / _ \ '__|
   ____) | |_| | |_) | | | |  __/ |   
  |_____/ \__, | .__/|_| |_|\___|_|   
           __/ | |                    
-         |___/|_|                    
-");
+         |___/|_|                    ");
 
-            Console.ResetColor();
-        }
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("~ Welcome to Sypher - Your Cybersecurity Awareness Assistant ~");
+            Console.WriteLine();
 
-        static string GetUserName()
-        {
+            // Ask for user name with better prompt
             Console.ForegroundColor = ConsoleColor.White;
-            Console.Write("\nEnter your name: ");
-            string name = Console.ReadLine();
+            Console.Write("Before we begin, may I know your name? ");
+            string userName = Console.ReadLine();
 
-            while (string.IsNullOrWhiteSpace(name))
+            // Validate name isn't empty
+            while (string.IsNullOrWhiteSpace(userName))
             {
-                Console.Write("Please enter a valid name: ");
-                name = Console.ReadLine();
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write("I didn't catch that. What should I call you? ");
+                Console.ForegroundColor = ConsoleColor.White;
+                userName = Console.ReadLine();
             }
 
-            return name.Trim();
-        }
+            // Create user object
+            User user = new User(userName);
 
-        static void DisplayWelcome(User user)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(new string('-', 50));
-            Console.WriteLine($"Hello {user.Name}, I am Sypher. Your cybersecurity assistant.");
-            Console.WriteLine("Type 'exit' or 'quit' to end the conversation.");
-            Console.WriteLine(new string('-', 50));
-            Console.WriteLine();
-        }
-
-        static void StartChat(User user)
-        {
+            // Create chatbot
             ChatBot bot = new ChatBot();
-            string userInput;
 
+            // Personalised welcome with border
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(new string('=', 55));
+            Console.WriteLine($"Hello {user.Name}! I'm Sypher, your personal cybersecurity guide.");
+            Console.WriteLine($"I'm here to help you learn about online safety, {user.Name}.");
+            Console.WriteLine("Type 'exit' or 'quit' to end our conversation.");
+            Console.WriteLine(new string('=', 55));
+            Console.WriteLine();
+
+            // Main chat loop
+            string userInput;
             do
             {
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.Write($"{user.Name}: ");
-                userInput = Console.ReadLine()?.Trim();
+                userInput = Console.ReadLine();
 
+                // Handle empty input
                 if (string.IsNullOrWhiteSpace(userInput))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Sypher: Please type something.");
+                    Console.WriteLine("Sypher: Please type something. I'm here to help!");
                     continue;
                 }
 
-                if (userInput.Equals("exit", StringComparison.OrdinalIgnoreCase) ||
-                    userInput.Equals("quit", StringComparison.OrdinalIgnoreCase))
+                // Check for exit command
+                if (userInput.ToLower() == "exit" || userInput.ToLower() == "quit")
                     break;
 
-                ShowLoading();
+                // Get response from chatbot
                 string response = bot.GetResponse(userInput, user.Name);
 
-                if (response.StartsWith("EXIT|"))
-                {
-                    string exitMessage = response.Substring(5);
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.Write("Sypher: ");
-                    TypeText(exitMessage);
-                    break;
-                }
-
+                // Display response with typing effect
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("Sypher: ");
                 TypeText(response);
 
-                Console.ForegroundColor = ConsoleColor.DarkGray;
-                Console.WriteLine(new string('-', 40));
-
             } while (true);
-        }
 
-        static void DisplayGoodbye(User user)
-        {
+            // Goodbye message with border
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(new string('-', 50));
-            Console.WriteLine($"Goodbye {user.Name}. Stay safe online!");
-            Console.WriteLine(new string('-', 50));
+            Console.WriteLine(new string('=', 55));
+            Console.WriteLine($"Goodbye {user.Name}! Remember: Stay safe, stay secure!");
+            Console.WriteLine("Sypher will always be here when you need cybersecurity advice.");
+            Console.WriteLine(new string('=', 55));
             Console.ResetColor();
         }
 
-        static void ShowLoading()
+        // Typing effect method
+        static void TypeText(string text, int delay = 30)
         {
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.Write("Sypher is thinking");
-
-            for (int i = 0; i < 3; i++)
-            {
-                Thread.Sleep(300);
-                Console.Write(".");
-            }
-
-            Console.WriteLine();
-        }
-
-        static void TypeText(string text, int minDelay = 20, int maxDelay = 50)
-        {
-            Random rand = new Random();
-
             foreach (char c in text)
             {
                 Console.Write(c);
-                Thread.Sleep(rand.Next(minDelay, maxDelay));
+                Thread.Sleep(delay);
             }
-
             Console.WriteLine();
         }
     }
