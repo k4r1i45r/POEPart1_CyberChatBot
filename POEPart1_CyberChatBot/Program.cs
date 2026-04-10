@@ -1,4 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
+//Initial setup
+
 using POEPart1_CyberChatBot;
 
 namespace SypherChatbot
