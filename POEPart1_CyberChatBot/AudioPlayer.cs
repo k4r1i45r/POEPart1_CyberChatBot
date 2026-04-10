@@ -10,7 +10,7 @@ namespace CybersecurityChatbot
 
         public AudioPlayer()
         {
-            audioPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "\"C:\\Users\\Student\\Downloads\\greeting.wav.wav\"");
+            audioPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "\"C:\\Users\\Student\\source\\repos\\POEPart1_CyberChatBot\\POEPart1_CyberChatBot\\bin\\Debug\\net8.0\\greeting.wav.wav\"");
         }
 
         public void PlayGreeting()
