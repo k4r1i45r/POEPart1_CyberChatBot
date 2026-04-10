@@ -1,29 +1,52 @@
 ﻿using System;
-using System.IO;
 using System.Media;
+using System.IO;
 
-namespace POEPart1_CyberChatBot
+namespace CybersecurityChatbot
 {
-    internal class AudioPlayer
+    public class AudioPlayer
     {
-        public void PlayGreeting(string fileName)
+        private string audioPath;
+
+        public AudioPlayer()
+        {
+            audioPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "\"C:\\Users\\Student\\Downloads\\greeting.wav.wav\"");
+        }
+
+        public void PlayGreeting()
         {
             try
             {
-                if (!File.Exists(fileName))
+                if (File.Exists(audioPath))
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Audio file not found.");
-                    return;
-                }
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine($"\n🔊 Audio path: {audioPath}");
+                    Console.WriteLine("Playing voice greeting...");
+                    Console.ResetColor();
 
-                SoundPlayer player = new SoundPlayer(fileName);
-                player.PlaySync();
+                    using (SoundPlayer player = new SoundPlayer(audioPath))
+                    {
+                        player.PlaySync();
+                    }
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("✅ Voice greeting played successfully!\n");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"\n⚠️ Warning: Greeting.wav not found");
+                    Console.WriteLine($"📁 Expected location: {audioPath}");
+                    Console.WriteLine("ℹ️ Voice greeting will be skipped until you add the file.\n");
+                    Console.ResetColor();
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Error playing audio.");
+                Console.WriteLine($"\n❌ Error playing audio: {ex.Message}\n");
+                Console.ResetColor();
             }
         }
     }

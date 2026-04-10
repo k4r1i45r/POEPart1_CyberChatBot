@@ -21,9 +21,6 @@ namespace SypherChatbot
             Console.Title = "Sypher - Cybersecurity Assistant";
             Console.ForegroundColor = ConsoleColor.Cyan;
 
-            // Play voice greeting using AudioPlayer
-            AudioPlayer audio = new AudioPlayer();
-            audio.PlayGreeting("greeting.wav");
 
             // Display Sypher ASCII art
             Console.WriteLine(@"   _____             _               
