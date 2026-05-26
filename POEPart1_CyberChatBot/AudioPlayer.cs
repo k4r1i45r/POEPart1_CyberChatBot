@@ -16,12 +16,12 @@ namespace POEPart1_CyberChatBot
                 if (File.Exists(fullPath))
                 {
                     SoundPlayer player = new SoundPlayer(fullPath);
-                    player.Play();  // Changed from PlaySync to Play (plays in background)
+                    player.Play();  
                 }
             }
             catch
             {
-                // Silently fail - no console messages
+            
             }
         }
     }

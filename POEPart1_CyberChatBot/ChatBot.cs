@@ -39,7 +39,7 @@ namespace POEPart1_CyberChatBot
                     return $"I'm fully secure and ready to help, {userName}! How can I boost your cybersecurity knowledge today?";
                 }
 
-                // Cybersecurity topics – detailed and friendly
+                // Cybersecurity topics 
                 if (lowerInput.Contains("password"))
                 {
                     return $"Passwords are like keys to your digital life, {userName}. A strong password has at least 12 characters, mixing uppercase, lowercase, numbers, and symbols. Never reuse passwords across sites, and consider using a password manager. Want tips on creating one?";

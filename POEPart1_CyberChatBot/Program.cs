@@ -84,7 +84,7 @@ namespace POEPart1_CyberChatBot
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.Write("Sypher: ");
                     TypeText(response);
-                    Console.WriteLine();  // Extra blank line after each bot response
+                    Console.WriteLine();  
 
                 } while (true);
 
