@@ -12,9 +12,9 @@ using System.Windows.Shapes;
 
 namespace SypherUI
 {
-    /// <summary>
+ 
     /// Interaction logic for MainWindow.xaml
-    /// </summary>
+    
     public partial class MainWindow : Window
     {
         private string userName = "User";
@@ -61,7 +61,7 @@ namespace SypherUI
 
             userName = name;
 
-            // Update both Username labels (blurred shadow + visible)
+           
             usernameLabel.Content = name;
             usernameLabelBlur.Content = name;
 
