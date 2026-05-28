@@ -68,7 +68,6 @@ namespace SypherUI
             
             Response1.Content = $"Hello {name}, welcome to Sypher AI! How can I assist you today?";
 
-            // Lock name input after submission
             nameinput.IsEnabled = false;
             nameSendBtn.IsEnabled = false;
         }
