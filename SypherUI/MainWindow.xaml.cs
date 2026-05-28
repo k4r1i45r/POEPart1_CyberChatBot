@@ -65,7 +65,7 @@ namespace SypherUI
             usernameLabel.Content = name;
             usernameLabelBlur.Content = name;
 
-            // Sypher AI greets the user by name
+            
             Response1.Content = $"Hello {name}, welcome to Sypher AI! How can I assist you today?";
 
             // Lock name input after submission
