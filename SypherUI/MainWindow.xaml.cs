@@ -86,7 +86,7 @@ namespace SypherUI
             // Show user's message
             Response2.Content = message;
 
-            // Cycle through AI responses
+            
             Response3.Content = responses[index % responses.Count];
             index++;
 
