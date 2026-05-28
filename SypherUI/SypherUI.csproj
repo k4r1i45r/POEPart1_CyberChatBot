@@ -8,4 +8,34 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="de6e8d53598eecfb6a2d86919b267791.jpg" />
+    <None Remove="icons8-cyber-security-48.png" />
+    <None Remove="icons8-hips-32.png" />
+    <None Remove="icons8-malware-32.png" />
+    <None Remove="icons8-phishing-32.png" />
+    <None Remove="icons8-profile-48.png" />
+    <None Remove="icons8-test-account-48.png" />
+    <None Remove="images.jpg" />
+    <None Remove="incident.png" />
+    <None Remove="Screenshot 2026-05-15 095847.png" />
+    <None Remove="sypher ascii.png" />
+    <None Remove="user.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="de6e8d53598eecfb6a2d86919b267791.jpg" />
+    <Resource Include="icons8-cyber-security-48.png" />
+    <Resource Include="icons8-hips-32.png" />
+    <Resource Include="icons8-malware-32.png" />
+    <Resource Include="icons8-phishing-32.png" />
+    <Resource Include="icons8-profile-48.png" />
+    <Resource Include="icons8-test-account-48.png" />
+    <Resource Include="images.jpg" />
+    <Resource Include="incident.png" />
+    <Resource Include="Screenshot 2026-05-15 095847.png" />
+    <Resource Include="sypher ascii.png" />
+    <Resource Include="user.png" />
+  </ItemGroup>
+
 </Project>
