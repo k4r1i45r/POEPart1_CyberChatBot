@@ -1,99 +1,116 @@
-﻿using System.Media;
-using System.Text;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace SypherUI
 {
- 
-    /// Interaction logic for MainWindow.xaml
-    
     public partial class MainWindow : Window
     {
-        private string userName = "User";
-
-        private List<string> responses = new List<string>
-        {
-            "I can help with that! What specific cybersecurity concern do you have?",
-            "Great question. Make sure your firewall and antivirus are up to date.",
-            "I recommend enabling two-factor authentication on all accounts."
-        };
-
-        private int index = 0;
+        private ChatBot _chatBot;
+        private ResponseHandler _responseHandler;
 
         public MainWindow()
         {
             InitializeComponent();
-            SoundPlayer sound = new SoundPlayer("greeting.wav");
-            //sound.Play();
+            _chatBot = new ChatBot();
+            _responseHandler = new ResponseHandler(_chatBot);
+            UIAssist.Initialize(ChatItemsControl, ChatScrollViewer);
+
+            Loaded += MainWindow_Loaded;
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            AudioPlayer.PlayGreeting();
+
+            UIAssist.AddBotMessage(
+                "Hello. I am Sypher AI, your cybersecurity awareness chatbot. " +
+                "I can help you with passwords, scams, privacy, phishing, malware, 2FA, VPNs, and updates. What is your name?");
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Button clicked = sender as Button;
-
-            if (clicked == nameSendBtn)
-            {
+            if (sender == nameSendBtn)
                 HandleNameSubmit();
-            }
-            else if (clicked == txtSendBtn)
-            {
-                HandleMessageSend();
-            }
+            else if (sender == txtSendBtn)
+                SendUserMessage();
         }
 
         private void HandleNameSubmit()
         {
             string name = nameinput.Text.Trim();
-
             if (string.IsNullOrEmpty(name))
             {
                 MessageBox.Show("Please enter your name.", "Sypher AI");
                 return;
             }
 
-            userName = name;
-
-           
+            _chatBot.RememberInfo("name", name);
             usernameLabel.Text = name;
 
-            
-            //Response1.Content = $"Hello {name}, welcome to Sypher AI! How can I assist you today?";
+            UIAssist.AddBotMessage($"Thank you, {name}! How can I help you with cybersecurity today?");
 
             nameinput.IsEnabled = false;
             nameSendBtn.IsEnabled = false;
         }
 
-        private void HandleMessageSend()
+        private void SendUserMessage()
         {
             string message = txtInput.Text.Trim();
-
             if (string.IsNullOrEmpty(message) || message == "Type your message...")
-            {
-                MessageBox.Show("Please type a message first.", "Sypher AI");
                 return;
-            }
 
-            
-            //Response2.Content = message;
+            UIAssist.AddUserMessage(message);
+            string response = _responseHandler.GetFinalResponse(message);
+            UIAssist.AddBotMessage(response);
 
-            
-            //Response3.Content = responses[index % responses.Count];
-            index++;
-
-            // Clear input
             txtInput.Clear();
         }
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void MessageInput_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.Key == Key.Enter)
+            {
+                SendUserMessage();
+                e.Handled = true;
+            }
+        }
+
+        private void NewChat_Click(object sender, RoutedEventArgs e)
+        {
+            _chatBot.ClearMemory();
+            UIAssist.ClearChat();
+            nameinput.IsEnabled = true;
+            nameSendBtn.IsEnabled = true;
+            nameinput.Clear();
+            usernameLabel.Text = "Username";
+            UIAssist.AddBotMessage("New conversation started. What is your name?");
+        }
+
+        private void RemovePlaceholder(object sender, RoutedEventArgs e)
+        {
+            if (txtInput.Text == "Type your message...")
+            {
+                txtInput.Text = "";
+                txtInput.Foreground = new SolidColorBrush(Color.FromRgb(26, 32, 44));
+            }
+        }
+
+        private void AddPlaceholder(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtInput.Text))
+            {
+                txtInput.Text = "Type your message...";
+                txtInput.Foreground = new SolidColorBrush(Color.FromRgb(160, 174, 192));
+            }
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            AudioPlayer.StopGreeting();
+            base.OnClosed(e);
         }
     }
 }
