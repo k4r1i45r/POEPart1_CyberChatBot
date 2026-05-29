@@ -14,109 +14,72 @@ namespace SypherUI
         {
             _responses = new Dictionary<string, List<string>>
             {
-                { "password", new List<string>
-                    {
-                        "Use strong, unique passwords for every account. A password manager makes this much easier.",
-                        "Never reuse the same password across different websites.",
-                        "Consider using passphrases like 'Correct-Horse-Battery-Staple'."
-                    }
-                },
-                { "scam", new List<string>
-                    {
-                        "Scammers create urgency. Always pause and verify before acting.",
-                        "Never send money or personal details to someone who contacted you first.",
-                        "Be suspicious of unexpected requests for information or money."
-                    }
-                },
-                { "phishing", new List<string>
-                    {
-                        "Always check the sender's email address carefully.",
-                        "Hover over links before clicking to see the real destination.",
-                        "Never enter your password on a site reached from an email."
-                    }
-                },
-                { "privacy", new List<string>
-                    {
-                        "Use a VPN on public Wi-Fi to protect your data.",
-                        "Review app permissions regularly.",
-                        "Limit personal information shared on social media."
-                    }
-                },
-                { "malware", new List<string>
-                    {
-                        "Keep your antivirus updated and avoid cracked software.",
-                        "Be careful with email attachments and unknown USB drives.",
-                        "Don't click on pop-ups saying your computer is infected."
-                    }
-                },
-                { "2fa", new List<string>
-                    {
-                        "2FA adds a strong second layer of protection.",
-                        "Use an authenticator app instead of SMS when possible.",
-                        "Enable 2FA on your email and banking accounts first."
-                    }
-                },
-                { "vpn", new List<string>
-                    {
-                        "A VPN encrypts your connection, especially on public Wi-Fi.",
-                        "Choose reputable VPNs with no-logs policy.",
-                        "Always turn on your VPN before using public networks."
-                    }
-                },
-                { "update", new List<string>
-                    {
-                        "Software updates contain important security patches.",
-                        "Enable automatic updates whenever possible.",
-                        "Outdated software is a common target for hackers."
-                    }
-                }
+                { "password", new List<string> { "Use strong unique passwords for every account.", "Never reuse passwords.", "Use a password manager." } },
+                { "scam", new List<string> { "Scammers create urgency. Pause and verify.", "Never send money to strangers.", "Verify requests before acting." } },
+                { "phishing", new List<string> { "Check sender email carefully.", "Hover over links before clicking.", "Never enter password from email." } },
+                { "privacy", new List<string> { "Use VPN on public Wi-Fi.", "Review app permissions.", "Limit personal info shared online." } },
+                { "malware", new List<string> { "Keep antivirus updated.", "Avoid cracked software.", "Be careful with unknown USBs." } },
+                { "2fa", new List<string> { "Enable 2FA on important accounts.", "Use authenticator apps.", "Better than SMS." } },
+                { "vpn", new List<string> { "VPN encrypts your connection.", "Use on public Wi-Fi.", "Choose reputable providers." } },
+                { "update", new List<string> { "Always install updates.", "They fix security holes.", "Enable auto updates." } }
             };
         }
 
         public void RememberInfo(string key, string value) => _memory[key] = value;
+
         public string GetName() => _memory.ContainsKey("name") ? _memory["name"] : "User";
+
         public void ClearMemory() => _memory.Clear();
 
         public string GetResponse(string userInput)
         {
             if (string.IsNullOrWhiteSpace(userInput))
-                return "Please type a message so I can help you.";
+                return "Please type a message.";
 
             string input = userInput.ToLower().Trim();
             string name = GetName();
 
-            // General conversation
-            if (input.Contains("how are you"))
-                return $"I'm doing great, {name}! Ready to help you with cybersecurity. How are you?";
-
-            if (input.Contains("who are you") || input.Contains("purpose"))
-                return "I'm Sypher AI, your cybersecurity awareness assistant. My purpose is to help you stay safe online.";
-
-            // Name handling
+            // Name Memory
             if (input.Contains("my name is") || input.Contains("call me"))
             {
-                string extractedName = ExtractName(userInput);
-                if (!string.IsNullOrEmpty(extractedName))
+                string newName = ExtractName(userInput);
+                if (!string.IsNullOrEmpty(newName))
                 {
-                    RememberInfo("name", extractedName);
-                    return $"Nice to meet you, {extractedName}! How can I help you today?";
+                    RememberInfo("name", newName);
+                    return $"Got it! I'll call you {newName}.";
                 }
             }
 
+            if (input.Contains("what is my name") || input.Contains("what's my name"))
+                return _memory.ContainsKey("name") ? $"Your name is {_memory["name"]}." : "I don't know your name yet.";
+
+            // Favorite Topic Memory
+            if (input.Contains("interested in") || input.Contains("favorite topic"))
+            {
+                string detectedTopic = DetectTopic(input);
+                if (!string.IsNullOrEmpty(detectedTopic))
+                {
+                    RememberInfo("favoritetopic", detectedTopic);
+                    return $"I'll remember your favorite topic is {detectedTopic}. {GetRandomResponse(detectedTopic)}";
+                }
+            }
+
+            if (input.Contains("favorite topic"))
+                return _memory.ContainsKey("favoritetopic") ? $"Your favorite topic is {_memory["favoritetopic"]}." : "You haven't told me your favorite topic yet.";
+
             // Sentiment
-            if (input.Contains("worried") || input.Contains("scared") || input.Contains("afraid"))
-                return $"I understand you're worried, {name}. That's completely normal. " + GetRandomResponse(DetectTopic(input));
+            if (input.Contains("worried") || input.Contains("scared"))
+                return $"I understand you're worried, {name}. " + GetRandomResponse(DetectTopic(input));
 
             if (input.Contains("frustrated") || input.Contains("confused"))
-                return $"I hear you, {name}. Let's take this one step at a time. " + GetRandomResponse(DetectTopic(input));
+                return $"I hear you, {name}. Let's take it step by step. " + GetRandomResponse(DetectTopic(input));
 
-            // Keyword detection
+            // Keyword Response
             string topic = DetectTopic(input);
             if (!string.IsNullOrEmpty(topic))
                 return GetRandomResponse(topic);
 
-            // Default
-            return $"Good question, {name}. Would you like tips on passwords, scams, phishing, malware, 2FA, VPNs, or updates?";
+            return $"Hi {name}, what would you like to know about cybersecurity?";
         }
 
         private string DetectTopic(string input)
@@ -125,7 +88,7 @@ namespace SypherUI
             if (input.Contains("scam")) return "scam";
             if (input.Contains("phish")) return "phishing";
             if (input.Contains("privac")) return "privacy";
-            if (input.Contains("malware") || input.Contains("virus")) return "malware";
+            if (input.Contains("malware")) return "malware";
             if (input.Contains("2fa") || input.Contains("two factor")) return "2fa";
             if (input.Contains("vpn")) return "vpn";
             if (input.Contains("update")) return "update";
@@ -139,7 +102,7 @@ namespace SypherUI
                 var list = _responses[topic];
                 return list[_random.Next(list.Count)];
             }
-            return "Let me know more details and I'll give you helpful advice.";
+            return "Let me know more details and I'll help you.";
         }
 
         private string ExtractName(string input)
@@ -150,7 +113,7 @@ namespace SypherUI
                 if (words[i].ToLower() == "is" || words[i].ToLower() == "me")
                 {
                     if (i + 1 < words.Length)
-                        return words[i + 1];
+                        return char.ToUpper(words[i + 1][0]) + words[i + 1].Substring(1).ToLower();
                 }
             }
             return "";
