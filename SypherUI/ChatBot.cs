@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SypherUI
 {
@@ -10,7 +9,6 @@ namespace SypherUI
         private Random _random = new Random();
 
         private Dictionary<string, List<string>> _keywordResponses;
-        private Dictionary<string, List<string>> _randomResponseSets;
 
         public ChatBot()
         {
@@ -74,28 +72,10 @@ namespace SypherUI
                 },
                 { "update", new List<string>()
                     {
-                        "Software updates often include important security patches for known vulnerabilities.",
+                        "Software updates often contain important security patches for known vulnerabilities.",
                         "Enable automatic updates on your operating system, browser, and apps when possible.",
                         "Outdated software is one of the most common ways hackers gain access to devices.",
                         "Do not ignore update reminders. Set aside time to install them regularly."
-                    }
-                }
-            };
-
-            _randomResponseSets = new Dictionary<string, List<string>>()
-            {
-                { "phishing_tips", new List<string>()
-                    {
-                        "Phishing emails often have spelling mistakes. Legitimate companies usually proofread their messages.",
-                        "If an email asks you to click a link to verify your account, go to the website manually instead.",
-                        "Scammers sometimes call pretending to be from your bank. Hang up and call the number on your card.",
-                        "Be wary of messages that say your account will be closed unless you act immediately."
-                    }
-                },
-                { "greetings", new List<string>()
-                    {
-                        "Hello. I am Sypher AI, your cybersecurity awareness chatbot. I can help you with passwords, scams, privacy, phishing, malware, 2FA, VPNs, and updates. What is your name?",
-                        "Welcome. I am Sypher AI. I provide guidance on staying safe online. What is your name?"
                     }
                 }
             };
@@ -124,23 +104,25 @@ namespace SypherUI
             string input = userInput.ToLower().Trim();
             string name = GetName();
 
-            if (!_memory.ContainsKey("name") && !string.IsNullOrWhiteSpace(input))
+            // Handle first-time name capture
+            if (!_memory.ContainsKey("name"))
             {
-                bool likelyName = !input.Contains(" ") && input.Length < 20 && !input.Contains("?") && !input.Contains("help") && !input.Contains("what") && !input.Contains("how");
-                if (likelyName || (input.Length > 1 && input.Length < 15))
+                string detectedName = userInput.Trim();
+                if (detectedName.Length > 0 && detectedName.Length < 20 && !detectedName.Contains(" "))
                 {
-                    string detectedName = userInput.Trim();
-                    if (detectedName.Length > 0)
-                    {
-                        char first = char.ToUpper(detectedName[0]);
-                        string rest = detectedName.Length > 1 ? detectedName.Substring(1).ToLower() : "";
-                        string properName = first + rest;
-                        _memory["name"] = properName;
-                        return $"Thank you, {properName}. How can I help you with cybersecurity today?";
-                    }
+                    char first = char.ToUpper(detectedName[0]);
+                    string rest = detectedName.Length > 1 ? detectedName.Substring(1).ToLower() : "";
+                    string properName = first + rest;
+                    _memory["name"] = properName;
+                    return $"Thank you, {properName}. How can I help you with cybersecurity today?";
+                }
+                else
+                {
+                    return "Hello. I am Sypher AI. What is your name?";
                 }
             }
 
+            // Explicit name setting
             if (input.Contains("my name is") || input.Contains("call me"))
             {
                 string[] parts = userInput.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -149,54 +131,75 @@ namespace SypherUI
                     if (parts[i].ToLower() == "is" && i + 1 < parts.Length)
                     {
                         string extractedName = parts[i + 1];
-                        if (extractedName.Length > 0)
-                        {
-                            char first = char.ToUpper(extractedName[0]);
-                            string rest = extractedName.Length > 1 ? extractedName.Substring(1).ToLower() : "";
-                            _memory["name"] = first + rest;
-                            return $"Nice to meet you, {_memory["name"]}. How can I assist with cybersecurity today?";
-                        }
+                        char first = char.ToUpper(extractedName[0]);
+                        string rest = extractedName.Length > 1 ? extractedName.Substring(1).ToLower() : "";
+                        _memory["name"] = first + rest;
+                        return $"Nice to meet you, {_memory["name"]}. How can I assist with cybersecurity today?";
                     }
                     else if (parts[i].ToLower() == "me" && i + 1 < parts.Length)
                     {
                         string extractedName = parts[i + 1];
-                        if (extractedName.Length > 0)
-                        {
-                            char first = char.ToUpper(extractedName[0]);
-                            string rest = extractedName.Length > 1 ? extractedName.Substring(1).ToLower() : "";
-                            _memory["name"] = first + rest;
-                            return $"Got it, {_memory["name"]}. What would you like to know about cybersecurity?";
-                        }
+                        char first = char.ToUpper(extractedName[0]);
+                        string rest = extractedName.Length > 1 ? extractedName.Substring(1).ToLower() : "";
+                        _memory["name"] = first + rest;
+                        return $"Got it, {_memory["name"]}. What would you like to know about cybersecurity?";
                     }
                 }
             }
 
-            if (input.Contains("what is my name") || input.Contains("what's my name") || input.Contains("do you know my name") || input.Contains("remember my name"))
+            // WHAT IS MY NAME - recall
+            if (input.Contains("what is my name") || input.Contains("what's my name") || input.Contains("do you know my name"))
             {
                 if (_memory.ContainsKey("name"))
-                {
                     return $"Your name is {_memory["name"]}. I have remembered it from our conversation.";
-                }
                 else
-                {
-                    return "I do not know your name yet. Could you please tell me what I should call you?";
-                }
+                    return "I do not know your name yet. Please tell me what I should call you.";
             }
 
-            if (input.Contains("favorite topic") || input.Contains("favourite topic") || input.Contains("my favorite") || input.Contains("what topic do I like") || input.Contains("what am I interested in"))
+            // WHAT IS MY FAVORITE TOPIC - recall
+            if (input.Contains("favorite topic") || input.Contains("favourite topic") || input.Contains("what topic do i like"))
             {
                 if (_memory.ContainsKey("favoritetopic"))
                 {
                     string topic = _memory["favoritetopic"];
                     string article = (topic == "2fa" || topic == "vpn") ? "an" : "a";
-                    return $"You told me you are interested in {article} {topic} topic. Would you like me to share more tips about {topic}?";
+                    return $"You told me your favorite topic is {article} {topic}. Would you like me to share more tips about {topic}?";
                 }
                 else
                 {
-                    return "You have not told me your favorite cybersecurity topic yet. You can say something like I am interested in privacy or tell me about passwords.";
+                    return "You have not told me your favorite cybersecurity topic yet. You can say something like 'My favorite topic is privacy' or 'I am interested in passwords'.";
                 }
             }
 
+            // SET FAVORITE TOPIC - only when user EXPLICITLY says they are interested or it is their favorite
+            if (input.Contains("my favorite topic is") || input.Contains("my favourite topic is") || input.Contains("i am interested in") || input.Contains("i'm interested in"))
+            {
+                string topic = DetectTopic(input);
+                if (!string.IsNullOrEmpty(topic))
+                {
+                    RememberInfo("favoritetopic", topic);
+                    string article = (topic == "2fa" || topic == "vpn") ? "an" : "a";
+                    return $"Great! I will remember that your favorite cybersecurity topic is {article} {topic}. {GetRandomKeywordResponse(topic)}";
+                }
+                else
+                {
+                    return "What topic are you interested in? You can choose from passwords, scams, privacy, phishing, malware, 2FA, VPNs, or updates.";
+                }
+            }
+
+            // HOW ARE YOU
+            if (input.Contains("how are you"))
+            {
+                return $"I am doing well, {name}. Thank you for asking. I am here to help you with cybersecurity. How are you today?";
+            }
+
+            // WHO ARE YOU / WHAT IS YOUR PURPOSE
+            if (input.Contains("who are you") || input.Contains("what is your purpose") || input.Contains("what are you"))
+            {
+                return $"I am Sypher AI, your cybersecurity awareness assistant. My purpose is to help you understand online threats and stay safe. I can give you tips on passwords, scams, privacy, phishing, malware, 2FA, VPNs, and software updates.";
+            }
+
+            // Sentiment: worried / scared
             if (input.Contains("worried") || input.Contains("scared") || input.Contains("afraid") || input.Contains("nervous") || input.Contains("anxious"))
             {
                 string topicToSuggest = DetectTopic(input);
@@ -209,6 +212,7 @@ namespace SypherUI
                 return $"It is completely understandable to feel that way, {name}. Cybersecurity can seem overwhelming at first.{tip}";
             }
 
+            // Sentiment: frustrated
             if (input.Contains("frustrated") || input.Contains("confused") || input.Contains("overwhelmed"))
             {
                 string topicToSuggest = DetectTopic(input);
@@ -221,76 +225,73 @@ namespace SypherUI
                 return $"I hear your frustration, {name}. That is completely fair. Let us slow down and focus on one thing at a time.{tip}";
             }
 
-            if (input.Contains("curious") || input.Contains("interested in learning") || input.Contains("tell me about"))
+            // Sentiment: curious (but NOT setting favorite topic)
+            if (input.Contains("curious") && !input.Contains("interested in"))
             {
-                string topic = DetectTopic(input);
-                if (!string.IsNullOrEmpty(topic))
-                {
-                    string article = (topic == "2fa" || topic == "vpn") ? "an" : "a";
-                    RememberInfo("favoritetopic", topic);
-                    return $"That is great to hear, {name}. I will remember that you are interested in {article} {topic} topic. " + GetRandomKeywordResponse(topic);
-                }
-                else
-                {
-                    return $"I love that you are curious, {name}. Would you like to learn about passwords, scams, privacy, phishing, malware, 2FA, VPNs, or software updates?";
-                }
+                return $"I love that you are curious, {name}. Would you like to learn about passwords, scams, privacy, phishing, malware, 2FA, VPNs, or software updates? Just tell me what topic.";
             }
 
+            // Sentiment: happy
             if (input.Contains("happy") || input.Contains("feeling good") || input.Contains("great") || input.Contains("wonderful"))
             {
                 return $"I am glad to hear you are feeling positive, {name}. Staying confident helps you make better security decisions. Would you like a cybersecurity tip today?";
             }
 
+            // KEYWORD RECOGNITION - for normal questions like "tell me about password safety"
+            // This does NOT set favorite topic
             string detectedTopic = DetectTopic(input);
             if (!string.IsNullOrEmpty(detectedTopic))
             {
-                if (!_memory.ContainsKey("favoritetopic") && detectedTopic != "")
-                {
-                    string article = (detectedTopic == "2fa" || detectedTopic == "vpn") ? "an" : "a";
-                    _memory["recenttopic"] = detectedTopic;
-                    return $"Great question about {detectedTopic}. " + GetRandomKeywordResponse(detectedTopic);
-                }
-                else
-                {
-                    return GetRandomKeywordResponse(detectedTopic);
-                }
+                return GetRandomKeywordResponse(detectedTopic);
             }
 
+            // RANDOM RESPONSES for phishing (special case)
+            if (input.Contains("phishing tip") || input.Contains("phish tip"))
+            {
+                List<string> phishingTips = _keywordResponses["phishing"];
+                int index = _random.Next(phishingTips.Count);
+                return phishingTips[index];
+            }
+
+            // THANK YOU
             if (input.Contains("thank"))
             {
-                return $"You are very welcome, {name}. Stay safe online. Is there anything else I can help you with today?";
+                return $"You are very welcome, {name}. Stay safe online. Is there anything else I can help you with?";
             }
 
+            // GOODBYE
             if (input.Contains("bye") || input.Contains("goodbye") || input.Contains("exit") || input.Contains("quit"))
             {
                 return $"Goodbye, {name}. Remember to stay vigilant online. You can always come back if you have more questions.";
             }
 
+            // HELP
             if (input.Contains("help") || input.Contains("what can you do") || input.Contains("what do you know"))
             {
                 return $"I can help you with passwords, online scams, privacy protection, phishing attacks, malware, two-factor authentication, VPNs, and software updates. What would you like to know, {name}?";
             }
 
+            // DEFAULT / ERROR HANDLING
             return $"I am not sure I understand, {name}. Could you try rephrasing? You can ask me about passwords, scams, privacy, phishing, malware, 2FA, VPNs, or updates.";
         }
 
         private string DetectTopic(string input)
         {
-            if (input.Contains("password") || input.Contains("passphrase") || input.Contains("login"))
+            if (input.Contains("password"))
                 return "password";
-            if (input.Contains("scam") || input.Contains("fraud") || input.Contains("fake"))
+            if (input.Contains("scam") || input.Contains("fraud"))
                 return "scam";
-            if (input.Contains("privacy") || input.Contains("private") || input.Contains("personal data") || input.Contains("personal information"))
+            if (input.Contains("privacy") || input.Contains("personal data"))
                 return "privacy";
-            if (input.Contains("phish") || input.Contains("phishing"))
+            if (input.Contains("phish"))
                 return "phishing";
-            if (input.Contains("malware") || input.Contains("virus") || input.Contains("trojan") || input.Contains("ransomware"))
+            if (input.Contains("malware") || input.Contains("virus"))
                 return "malware";
-            if (input.Contains("2fa") || input.Contains("two factor") || input.Contains("two-factor") || input.Contains("authenticator") || input.Contains("mfa"))
+            if (input.Contains("2fa") || input.Contains("two factor") || input.Contains("authenticator"))
                 return "2fa";
-            if (input.Contains("vpn") || input.Contains("virtual private network"))
+            if (input.Contains("vpn"))
                 return "vpn";
-            if (input.Contains("update") || input.Contains("patch") || input.Contains("software update"))
+            if (input.Contains("update") || input.Contains("patch"))
                 return "update";
             return "";
         }
@@ -306,30 +307,14 @@ namespace SypherUI
             return "Let me know more about what you are concerned with, and I will give you practical advice.";
         }
 
-        public string GetRandomPhishingTip()
-        {
-            List<string> tips = _randomResponseSets["phishing_tips"];
-            int index = _random.Next(tips.Count);
-            return tips[index];
-        }
-
         public string GetGreeting()
         {
-            List<string> greetings = _randomResponseSets["greetings"];
-            int index = _random.Next(greetings.Count);
-            return greetings[index];
+            return "Hello. I am Sypher AI, your cybersecurity awareness chatbot. I can help you with passwords, scams, privacy, phishing, malware, 2FA, VPNs, and updates. What is your name?";
         }
 
         public void ClearMemory()
         {
             _memory.Clear();
-        }
-
-        public string RecallInfo(string key)
-        {
-            if (_memory.ContainsKey(key))
-                return _memory[key];
-            return "";
         }
     }
 }
