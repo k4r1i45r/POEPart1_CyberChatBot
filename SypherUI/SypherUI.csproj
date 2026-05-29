@@ -38,4 +38,10 @@
     <Resource Include="user.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="greeting.wav.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
