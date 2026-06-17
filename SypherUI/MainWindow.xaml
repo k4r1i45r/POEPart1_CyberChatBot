@@ -111,7 +111,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- LEFT SIDEBAR -->
+            <!-- LEFT SIDEBAR (unchanged) -->
             <Border Grid.Column="0" Background="#010E22" BorderBrush="#133E82" BorderThickness="0,0,1,0">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -246,13 +246,17 @@
                 </Grid>
             </Border>
 
-            <!-- MAIN CONTENT AREA -->
+            <!-- MAIN CONTENT AREA (UPDATED WITH TABS) -->
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
+                    <!-- ASCII art -->
                     <RowDefinition Height="Auto"/>
+                    <!-- Name input -->
                     <RowDefinition Height="*"/>
+                    <!-- TabControl -->
                     <RowDefinition Height="Auto"/>
+                    <!-- Message input -->
                 </Grid.RowDefinitions>
 
                 <!-- ASCII Art -->
@@ -270,24 +274,75 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Chat Messages -->
-                <ScrollViewer x:Name="ChatScrollViewer" Grid.Row="2" VerticalScrollBarVisibility="Auto" Padding="18,12,18,12">
-                    <ItemsControl x:Name="ChatItemsControl">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Margin="0,4">
-                                    <Border HorizontalAlignment="{Binding Converter={StaticResource AlignConv}}"
-                                            Background="{Binding Converter={StaticResource BgConv}}"
-                                            CornerRadius="10" Padding="13,9" MaxWidth="480">
-                                        <TextBlock Text="{Binding Text}"
-                                                   Foreground="{Binding Converter={StaticResource FgConv}}"
-                                                   TextWrapping="Wrap" FontSize="12" LineHeight="19"/>
-                                    </Border>
-                                </Grid>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
+                <!-- NEW TAB CONTROL -->
+                <TabControl x:Name="MainTabControl" Grid.Row="2" Margin="10,0,10,10" Background="Transparent">
+                    <!-- Tab 1: Chat -->
+                    <TabItem Header="💬 Chat">
+                        <ScrollViewer x:Name="ChatScrollViewer" VerticalScrollBarVisibility="Auto" Padding="18,12,18,12">
+                            <ItemsControl x:Name="ChatItemsControl">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,4">
+                                            <Border HorizontalAlignment="{Binding Converter={StaticResource AlignConv}}"
+                                                    Background="{Binding Converter={StaticResource BgConv}}"
+                                                    CornerRadius="10" Padding="13,9" MaxWidth="480">
+                                                <TextBlock Text="{Binding Text}"
+                                                           Foreground="{Binding Converter={StaticResource FgConv}}"
+                                                           TextWrapping="Wrap" FontSize="12" LineHeight="19"/>
+                                            </Border>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <!-- Tab 2: Task Assistant -->
+                    <TabItem Header="📋 Tasks">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="15">
+                                <TextBlock Text="Add New Task" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,8"/>
+                                <TextBox x:Name="TaskTitleBox" Style="{StaticResource InputStyle}" Height="30" Margin="0,0,0,6" Text="Task title"/>
+                                <TextBox x:Name="TaskDescBox" Style="{StaticResource InputStyle}" Height="60" TextWrapping="Wrap" Margin="0,0,0,6" Text="Description"/>
+                                <TextBox x:Name="TaskReminderBox" Style="{StaticResource InputStyle}" Height="30" Margin="0,0,0,6" Text="Reminder (e.g., in 3 days)"/>
+                                <Button x:Name="AddTaskBtn" Content="Add Task" Style="{StaticResource ActionBtnStyle}" Height="34" Click="AddTaskBtn_Click"/>
+
+                                <TextBlock Text="Current Tasks" FontWeight="SemiBold" FontSize="14" Margin="0,20,0,8"/>
+                                <ListView x:Name="TaskListView" Height="200" Margin="0,0,0,8" SelectionChanged="TaskListView_SelectionChanged">
+                                    <ListView.View>
+                                        <GridView>
+                                            <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}" Width="120"/>
+                                            <GridViewColumn Header="Description" DisplayMemberBinding="{Binding Description}" Width="150"/>
+                                            <GridViewColumn Header="Reminder" DisplayMemberBinding="{Binding Reminder}" Width="80"/>
+                                            <GridViewColumn Header="Complete" DisplayMemberBinding="{Binding IsComplete}" Width="60"/>
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button x:Name="CompleteBtn" Content="Mark Complete" Style="{StaticResource ActionBtnStyle}" Height="30" Margin="0,0,10,0" Click="CompleteBtn_Click"/>
+                                    <Button x:Name="DeleteBtn" Content="Delete" Style="{StaticResource ActionBtnStyle}" Height="30" Click="DeleteBtn_Click"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <!-- Tab 3: Quiz -->
+                    <TabItem Header="🧠 Quiz">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="15">
+                                <TextBlock x:Name="QuizQuestionText" Text="Click 'Start Quiz' to begin" FontSize="14" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                                <ItemsControl x:Name="QuizOptionsControl" Margin="0,0,0,10"/>
+                                <Button x:Name="QuizSubmitBtn" Content="Submit Answer" Style="{StaticResource ActionBtnStyle}" Height="34" Margin="0,0,0,6" IsEnabled="False" Click="QuizSubmitBtn_Click"/>
+                                <TextBlock x:Name="QuizFeedbackText" Text="" Foreground="#2563EB" Margin="0,0,0,6" TextWrapping="Wrap"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                    <Button x:Name="QuizStartBtn" Content="Start Quiz" Style="{StaticResource ActionBtnStyle}" Height="34" Margin="0,0,10,0" Click="QuizStartBtn_Click"/>
+                                    <Button x:Name="QuizNextBtn" Content="Next Question" Style="{StaticResource ActionBtnStyle}" Height="34" IsEnabled="False" Click="QuizNextBtn_Click"/>
+                                </StackPanel>
+                                <TextBlock x:Name="QuizScoreText" Text="Score: 0 / 0" Margin="0,5"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+                </TabControl>
 
                 <!-- Message Input -->
                 <Border Grid.Row="3" Padding="16,10,16,14" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="0,1,0,0">

@@ -24,6 +24,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="de6e8d53598eecfb6a2d86919b267791.jpg" />
     <Resource Include="icons8-cyber-security-48.png" />
     <Resource Include="icons8-hips-32.png" />
