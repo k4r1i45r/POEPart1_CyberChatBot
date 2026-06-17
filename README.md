@@ -195,7 +195,7 @@ Part 3 added four major features on top of the existing application, transformin
 
 1. **Clone the repository**
    ```
-   git clone https://github.com/your-username/SypherAI.git
+   (https://github.com/k4r1i45r/POEPart1_CyberChatBot.git)
    ```
 
 2. **Open the solution**
