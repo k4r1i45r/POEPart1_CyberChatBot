@@ -49,7 +49,7 @@ namespace SypherUI
             UpdateTaskList();
         }
 
-        // ---------- Event Handlers for existing UI ----------
+        //Event Handlers for existing UI
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             if (sender == nameSendBtn)
