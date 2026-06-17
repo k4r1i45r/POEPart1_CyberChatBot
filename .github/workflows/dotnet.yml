@@ -1,4 +1,4 @@
-name: .NET Build
+name: SypherUI Build & Test
 
 on:
   push:
@@ -11,15 +11,25 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v4
-    
+    - name: Checkout code
+      uses: actions/checkout@v4
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 6.0.x
-    
+        dotnet-version: '8.0.x'
+
     - name: Restore dependencies
       run: dotnet restore
-    
-    - name: Build
-      run: dotnet build --no-restore --configuration Release
+
+    - name: Build the project
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Publish the application
+      run: dotnet publish --configuration Release --no-restore --output ./publish
+
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: SypherUI-Publish
+        path: ./publish
