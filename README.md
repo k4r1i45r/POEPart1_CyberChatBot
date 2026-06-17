@@ -223,12 +223,12 @@ Part 3 added four major features on top of the existing application, transformin
 
 ## Testing the Application – Quick Commands
 
-| Action | Type in Chat |
-| Add a task | Add task - Review privacy settings |
-| Set a reminder | Remind me to update password tomorrow |
-| Start the quiz | Start quiz |
-| Show activity log | Show activity log |
-| Show more log entries | Show more |
+**| Action | Type in Chat |**
+| 1. Add a task >> Add task - Review privacy settings |
+| 2. Set a reminder >> Remind me to update password tomorrow |
+| 3. Start the quiz >> Start quiz |
+| 4. Show activity log >> Show activity log |
+| 4. Show more log entries >> Show more |
 
 You can also use the **Tasks** and **Quiz** tabs for the same functionality.
 
