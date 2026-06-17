@@ -135,7 +135,7 @@ namespace SypherUI
             base.OnClosed(e);
         }
 
-        // NEW PART 3: Task Assistant
+        // New Part 3: Task Assistant
         private void AddTaskBtn_Click(object sender, RoutedEventArgs e)
         {
             string title = TaskTitleBox.Text.Trim();
