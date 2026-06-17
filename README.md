@@ -17,7 +17,8 @@ The application combines a conversational AI with productivity tools to help use
 
 ## Author
 
-- **Karlia Robson**
+- **Name** - Karlia Robson
+- **Student Number** - ST10485655
 
 ---
 
