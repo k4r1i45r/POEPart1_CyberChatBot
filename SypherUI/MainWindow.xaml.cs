@@ -195,7 +195,7 @@ namespace SypherUI
             }
         }
 
-        // NEW PART 3: Quiz
+        // New Part 3: Quiz
         private void QuizStartBtn_Click(object sender, RoutedEventArgs e)
         {
             _quizManager.ResetQuiz();
