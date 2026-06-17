@@ -135,7 +135,7 @@ namespace SypherUI
             base.OnClosed(e);
         }
 
-        // ---------- NEW PART 3: Task Assistant ----------
+        // NEW PART 3: Task Assistant
         private void AddTaskBtn_Click(object sender, RoutedEventArgs e)
         {
             string title = TaskTitleBox.Text.Trim();
@@ -195,7 +195,7 @@ namespace SypherUI
             }
         }
 
-        // ---------- NEW PART 3: Quiz ----------
+        // NEW PART 3: Quiz
         private void QuizStartBtn_Click(object sender, RoutedEventArgs e)
         {
             _quizManager.ResetQuiz();
@@ -225,7 +225,7 @@ namespace SypherUI
             }
 
             QuizQuestionText.Text = q.Question;
-            // Build option buttons dynamically
+
             var panel = QuizOptionsControl;
             panel.ItemsSource = null;
             List<RadioButton> options = new();
@@ -279,7 +279,7 @@ namespace SypherUI
             QuizNextBtn.IsEnabled = false;
         }
 
-        // ---------- NEW PART 3: NLP Processing ----------
+        // NEW PART 3: NLP Processing
         private string ProcessUserInput(string input)
         {
             string lower = input.ToLower();
@@ -326,7 +326,7 @@ namespace SypherUI
                 return msg + " Would you like to set a reminder? (e.g., 'remind me in 3 days')";
             }
 
-            // 4. Set Reminder (standalone)
+            // 4. Set Reminder
             if (lower.Contains("remind me") || lower.Contains("set reminder") || lower.Contains("remind in") ||
                 lower.Contains("don't forget"))
             {
