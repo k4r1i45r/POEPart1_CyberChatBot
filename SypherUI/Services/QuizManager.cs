@@ -11,20 +11,20 @@ using SypherUI.Models;
 namespace SypherUI.Services
 {
     public class QuizManager
-    {
-        private List<QuizQuestion> _questions;
-        private int _currentIndex = 0;
-        private int _score = 0;
-        private readonly ActivityLogger _logger = ActivityLogger.Instance;
-
-        public QuizManager()
         {
-            _questions = LoadQuestions();
-        }
+            private List<QuizQuestion> _questions;
+            private int _currentIndex = 0;
+            private int _score = 0;
+            private readonly ActivityLogger _logger = ActivityLogger.Instance;
 
-        private List<QuizQuestion> LoadQuestions()
-        {
-            return new List<QuizQuestion>
+            public QuizManager()
+            {
+                _questions = LoadQuestions();
+            }
+
+            private List<QuizQuestion> LoadQuestions()
+            {
+                return new List<QuizQuestion>
             {
                 new QuizQuestion
                 {
@@ -115,49 +115,49 @@ namespace SypherUI.Services
                     IsTrueFalse = true
                 }
             };
+            }
+
+            public QuizQuestion GetCurrentQuestion()
+            {
+                return _currentIndex < _questions.Count ? _questions[_currentIndex] : null;
+            }
+
+            public bool SubmitAnswer(string answer)
+            {
+                var q = GetCurrentQuestion();
+                if (q == null) return false;
+                bool correct = answer.Equals(q.CorrectAnswer, StringComparison.OrdinalIgnoreCase);
+                if (correct) _score++;
+                _currentIndex++;
+                return correct;
+            }
+
+            public string GetFeedback(bool correct)
+            {
+                var q = _questions[_currentIndex - 1];
+                return (correct ? "Correct! " : "Incorrect. ") + q.Explanation;
+            }
+
+            public bool IsFinished() => _currentIndex >= _questions.Count;
+
+            public int GetScore() => _score;
+            public int GetTotal() => _questions.Count;
+
+            public string GetFinalMessage()
+            {
+                double pct = (double)_score / _questions.Count;
+                if (pct >= 0.8) return "Great job! You're a cybersecurity pro!";
+                if (pct >= 0.5) return "Good effort! Keep learning to stay safe online.";
+                return "Keep learning! Cybersecurity is crucial for everyone.";
+            }
+
+            public void ResetQuiz()
+            {
+                _currentIndex = 0;
+                _score = 0;
+            }
+
+            public void LogQuizStart() => _logger.Log("Quiz started.");
+            public void LogQuizEnd() => _logger.Log($"Quiz completed - score: {_score} out of {_questions.Count}");
         }
-
-        public QuizQuestion GetCurrentQuestion()
-        {
-            return _currentIndex < _questions.Count ? _questions[_currentIndex] : null;
-        }
-
-        public bool SubmitAnswer(string answer)
-        {
-            var q = GetCurrentQuestion();
-            if (q == null) return false;
-            bool correct = answer.Equals(q.CorrectAnswer, StringComparison.OrdinalIgnoreCase);
-            if (correct) _score++;
-            _currentIndex++;
-            return correct;
-        }
-
-        public string GetFeedback(bool correct)
-        {
-            var q = _questions[_currentIndex - 1];
-            return (correct ? "Correct! " : "Incorrect. ") + q.Explanation;
-        }
-
-        public bool IsFinished() => _currentIndex >= _questions.Count;
-
-        public int GetScore() => _score;
-        public int GetTotal() => _questions.Count;
-
-        public string GetFinalMessage()
-        {
-            double pct = (double)_score / _questions.Count;
-            if (pct >= 0.8) return "Great job! You're a cybersecurity pro!";
-            if (pct >= 0.5) return "Good effort! Keep learning to stay safe online.";
-            return "Keep learning! Cybersecurity is crucial for everyone.";
-        }
-
-        public void ResetQuiz()
-        {
-            _currentIndex = 0;
-            _score = 0;
-        }
-
-        public void LogQuizStart() => _logger.Log("Quiz started.");
-        public void LogQuizEnd() => _logger.Log($"Quiz completed - score: {_score} out of {_questions.Count}");
     }
-}

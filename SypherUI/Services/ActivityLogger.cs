@@ -9,6 +9,7 @@ using System.Linq;
 using SypherUI.Data;
 using SypherUI.Models;
 
+
 namespace SypherUI.Services
 {
     public class ActivityLogger

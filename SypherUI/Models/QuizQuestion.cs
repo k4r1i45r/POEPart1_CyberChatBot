@@ -11,7 +11,7 @@ namespace SypherUI.Models
     public class QuizQuestion
     {
         public string Question { get; set; } = string.Empty;
-        public List<string> Options { get; set; } = new();   // for MC; for T/F, ["True","False"]
+        public List<string> Options { get; set; } = new();
         public string CorrectAnswer { get; set; } = string.Empty;
         public string Explanation { get; set; } = string.Empty;
         public bool IsTrueFalse { get; set; }

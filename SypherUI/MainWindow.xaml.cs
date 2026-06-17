@@ -7,6 +7,7 @@ using System.Windows.Media;
 using SypherUI.Models;
 using SypherUI.Services;
 
+
 namespace SypherUI
 {
     public partial class MainWindow : Window
@@ -20,6 +21,11 @@ namespace SypherUI
         private QuizManager _quizManager;
         private ActivityLogger _logger;
         private int _selectedTaskId = -1;
+
+        // Placeholder constants for Task Assistant
+        private const string TaskTitlePlaceholder = "Enter task title...";
+        private const string TaskDescPlaceholder = "Enter description...";
+        private const string TaskReminderPlaceholder = "Enter reminder (e.g., in 3 days)";
 
         public MainWindow()
         {
@@ -46,10 +52,11 @@ namespace SypherUI
                 "Hello. I am Sypher AI, your cybersecurity awareness chatbot. " +
                 "I can help you with passwords, scams, privacy, phishing, malware, 2FA, VPNs, and updates. What is your name?");
 
+            // Load tasks from database on startup
             UpdateTaskList();
         }
 
-        //Event Handlers for existing UI
+        // Event Handlers for existing UI
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             if (sender == nameSendBtn)
@@ -135,23 +142,92 @@ namespace SypherUI
             base.OnClosed(e);
         }
 
-        // New Part 3: Task Assistant
+        // Task Assistant Placeholder Handlers
+        private void TaskTitle_GotFocus(object sender, RoutedEventArgs e)
+        {
+            var tb = sender as TextBox;
+            if (tb != null && tb.Text == TaskTitlePlaceholder)
+            {
+                tb.Text = "";
+                tb.Foreground = new SolidColorBrush(Color.FromRgb(26, 32, 44));
+            }
+        }
+
+        private void TaskTitle_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var tb = sender as TextBox;
+            if (tb != null && string.IsNullOrWhiteSpace(tb.Text))
+            {
+                tb.Text = TaskTitlePlaceholder;
+                tb.Foreground = new SolidColorBrush(Color.FromRgb(160, 174, 192));
+            }
+        }
+
+        private void TaskDesc_GotFocus(object sender, RoutedEventArgs e)
+        {
+            var tb = sender as TextBox;
+            if (tb != null && tb.Text == TaskDescPlaceholder)
+            {
+                tb.Text = "";
+                tb.Foreground = new SolidColorBrush(Color.FromRgb(26, 32, 44));
+            }
+        }
+
+        private void TaskDesc_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var tb = sender as TextBox;
+            if (tb != null && string.IsNullOrWhiteSpace(tb.Text))
+            {
+                tb.Text = TaskDescPlaceholder;
+                tb.Foreground = new SolidColorBrush(Color.FromRgb(160, 174, 192));
+            }
+        }
+
+        private void TaskReminder_GotFocus(object sender, RoutedEventArgs e)
+        {
+            var tb = sender as TextBox;
+            if (tb != null && tb.Text == TaskReminderPlaceholder)
+            {
+                tb.Text = "";
+                tb.Foreground = new SolidColorBrush(Color.FromRgb(26, 32, 44));
+            }
+        }
+
+        private void TaskReminder_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var tb = sender as TextBox;
+            if (tb != null && string.IsNullOrWhiteSpace(tb.Text))
+            {
+                tb.Text = TaskReminderPlaceholder;
+                tb.Foreground = new SolidColorBrush(Color.FromRgb(160, 174, 192));
+            }
+        }
+
+        // NEW PART 3: Task Assistant
         private void AddTaskBtn_Click(object sender, RoutedEventArgs e)
         {
             string title = TaskTitleBox.Text.Trim();
-            string desc = TaskDescBox.Text.Trim();
-            string reminder = TaskReminderBox.Text.Trim();
-            if (string.IsNullOrEmpty(title))
+            if (title == TaskTitlePlaceholder || string.IsNullOrEmpty(title))
             {
                 MessageBox.Show("Please enter a task title.", "Sypher AI");
                 return;
             }
+            string desc = TaskDescBox.Text.Trim();
+            if (desc == TaskDescPlaceholder) desc = "";
+            string reminder = TaskReminderBox.Text.Trim();
+            if (reminder == TaskReminderPlaceholder) reminder = "";
+
             string msg = _taskManager.AddTask(title, desc, reminder);
             UpdateTaskList();
             UIAssist.AddBotMessage($"Bot: {msg}");
-            TaskTitleBox.Clear();
-            TaskDescBox.Clear();
-            TaskReminderBox.Clear();
+
+            // placeholders
+            TaskTitleBox.Text = TaskTitlePlaceholder;
+            TaskTitleBox.Foreground = new SolidColorBrush(Color.FromRgb(160, 174, 192));
+            TaskDescBox.Text = TaskDescPlaceholder;
+            TaskDescBox.Foreground = new SolidColorBrush(Color.FromRgb(160, 174, 192));
+            TaskReminderBox.Text = TaskReminderPlaceholder;
+            TaskReminderBox.Foreground = new SolidColorBrush(Color.FromRgb(160, 174, 192));
         }
 
         private void UpdateTaskList()
@@ -195,8 +271,8 @@ namespace SypherUI
             }
         }
 
-        // New Part 3: Quiz
-        private void QuizStartBtn_Click(object sender, RoutedEventArgs e)
+        // NEW PART 3: Quiz
+        private void StartQuiz()
         {
             _quizManager.ResetQuiz();
             _quizManager.LogQuizStart();
@@ -205,6 +281,11 @@ namespace SypherUI
             QuizSubmitBtn.IsEnabled = true;
             QuizNextBtn.IsEnabled = false;
             QuizFeedbackText.Text = "";
+        }
+
+        private void QuizStartBtn_Click(object sender, RoutedEventArgs e)
+        {
+            StartQuiz();
         }
 
         private void ShowCurrentQuizQuestion()
@@ -225,7 +306,7 @@ namespace SypherUI
             }
 
             QuizQuestionText.Text = q.Question;
-
+            // Build option buttons dynamically
             var panel = QuizOptionsControl;
             panel.ItemsSource = null;
             List<RadioButton> options = new();
@@ -306,10 +387,11 @@ namespace SypherUI
             {
                 Dispatcher.Invoke(() =>
                 {
-                    var tabControl = this.FindName("MainTabControl") as TabControl;
-                    if (tabControl != null)
+                    if (this.FindName("MainTabControl") is TabControl tabControl)
+                    {
                         tabControl.SelectedIndex = 2; // Quiz tab (index 2)
-                    QuizStartBtn_Click(null, null);
+                    }
+                    StartQuiz();
                 });
                 return "Alright! Starting the cybersecurity quiz. Go to the Quiz tab to answer.";
             }
@@ -326,7 +408,7 @@ namespace SypherUI
                 return msg + " Would you like to set a reminder? (e.g., 'remind me in 3 days')";
             }
 
-            // 4. Set Reminder
+            // 4. Set Reminder (standalone)
             if (lower.Contains("remind me") || lower.Contains("set reminder") || lower.Contains("remind in") ||
                 lower.Contains("don't forget"))
             {

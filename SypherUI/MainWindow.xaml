@@ -302,9 +302,24 @@
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
                             <StackPanel Margin="15">
                                 <TextBlock Text="Add New Task" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,8"/>
-                                <TextBox x:Name="TaskTitleBox" Style="{StaticResource InputStyle}" Height="30" Margin="0,0,0,6" Text="Task title"/>
-                                <TextBox x:Name="TaskDescBox" Style="{StaticResource InputStyle}" Height="60" TextWrapping="Wrap" Margin="0,0,0,6" Text="Description"/>
-                                <TextBox x:Name="TaskReminderBox" Style="{StaticResource InputStyle}" Height="30" Margin="0,0,0,6" Text="Reminder (e.g., in 3 days)"/>
+                                <TextBox x:Name="TaskTitleBox" 
+                                         Style="{StaticResource InputStyle}" 
+                                         Height="30" Margin="0,0,0,6" 
+                                         Text="Enter task title..." 
+                                         GotFocus="TaskTitle_GotFocus" 
+                                         LostFocus="TaskTitle_LostFocus"/>
+                                <TextBox x:Name="TaskDescBox" 
+                                         Style="{StaticResource InputStyle}" 
+                                         Height="60" TextWrapping="Wrap" Margin="0,0,0,6" 
+                                         Text="Enter description..." 
+                                         GotFocus="TaskDesc_GotFocus" 
+                                         LostFocus="TaskDesc_LostFocus"/>
+                                <TextBox x:Name="TaskReminderBox" 
+                                         Style="{StaticResource InputStyle}" 
+                                         Height="30" Margin="0,0,0,6" 
+                                         Text="Enter reminder (e.g., in 3 days)" 
+                                         GotFocus="TaskReminder_GotFocus" 
+                                         LostFocus="TaskReminder_LostFocus"/>
                                 <Button x:Name="AddTaskBtn" Content="Add Task" Style="{StaticResource ActionBtnStyle}" Height="34" Click="AddTaskBtn_Click"/>
 
                                 <TextBlock Text="Current Tasks" FontWeight="SemiBold" FontSize="14" Margin="0,20,0,8"/>
